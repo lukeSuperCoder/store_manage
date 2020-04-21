@@ -5,6 +5,11 @@ import router from './router'
 import './assets/css/global.css'
 import ElementUI from 'element-ui'
 import './styles.scss'
+import './assets/font/iconfont.css'
+import axios from 'axios'
+Vue.prototype.$http = axios;
+axios.defaults.baseURL='http://127.0.0.1:8090/api/'
+Vue.config.productionTip = false;
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
