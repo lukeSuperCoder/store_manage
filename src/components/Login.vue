@@ -36,8 +36,12 @@
             LoginAccount(formName) {
                 this.$refs[formName].validate(async(valid) => {
                     if (valid) {
-                      const result = await this.$http.post("login",this.login_form);
-                      console.log(result);
+                      const {data:result} = await this.$http.post("login",this.login_form);
+                      if(result.meta.status=='200'){
+                          this.$message.success("登陆成功");
+                      }else {
+                          this.$message.error("登陆失败");
+                      }
                     } else {
                         return false;
                     }
