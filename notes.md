@@ -3,7 +3,10 @@
 `git branch`  查看所有分支    
 `$ git add .`   将当前目录所有文件添加到git暂存区  
 `$ git commit -m "my first commit"`     提交并备注提交信息   
-`$ git push origin master`  将本地提交推送到远程仓库    
+`$ git push origin master`  将本地提交推送到远程仓库  
+`git checkout login` 切换分支  
+`$ git merge login` 合并分支  
+`git push `推送本地master代码到云端      
  ` position: absolute;
     top: 50%;
     left: 50%;
