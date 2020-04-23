@@ -39,6 +39,8 @@
                       const {data:result} = await this.$http.post("login",this.login_form);
                       if(result.meta.status=='200'){
                           this.$message.success("登陆成功");
+                          window.sessionStorage.setItem('token',result.data.token);
+                          this.$router.push('/Home');
                       }else {
                           this.$message.error("登陆失败");
                       }
