@@ -2,7 +2,7 @@
     <div class="login_container">
         <div class="login_span">
             <div class="avatar_box">
-                <img src="src/assets/picture/logo.png">
+                <img src="../assets/picture/logo.png">
             </div>
             <div class="login_box">
                 <el-form :model="login_form" ref="login_form" status-icon label-width="0px" class="demo-ruleForm">
@@ -27,8 +27,8 @@
         data() {
             return {
                 login_form: {
-                    username: '',
-                    password: ''
+                    username: 'admin',
+                    password: '123456'
                 },
             };
         },

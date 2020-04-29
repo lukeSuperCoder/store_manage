@@ -1,8 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from "../components/Login";
+import Welcome from "../components/Welcome";
 import Home from "../components/Home";
+import Users from "../components/users/Users";
 import ElementUI from 'element-ui';
+import Categories from  '../components/goods/Categories';
+import Goods from '../components/goods/Goods';
+import Params from '../components/goods/Params';
+import Orders from '../components/orders/Orders';
+import Reports from  '../components/reports/Reports';
+import Rights from '../components/rights/Rights';
+import Roles from '../components/rights/Roles';
+
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)
@@ -18,8 +28,21 @@ const routes = [
     },
     {
         path: '/Home',
-        component: Home
-    }
+        component: Home,
+        redirect:'/Welcome',
+        children: [
+            {path: '/Welcome', component: Welcome},
+            {path: '/users', component: Users},
+            {path: '/categories', component: Categories},
+            {path: '/goods', component: Goods},
+            {path: '/params', component: Params},
+            {path: '/orders', component: Orders},
+            {path: '/reports', component: Reports},
+            {path: '/rights', component: Rights},
+            {path: '/roles', component: Roles}
+        ]
+
+    },
 ]
 
 const router = new VueRouter({
