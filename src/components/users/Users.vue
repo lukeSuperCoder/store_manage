@@ -20,27 +20,35 @@
                 <template>
                     <el-table
                             :data="user_tableDate"
-                            border
+                            border stripe
                             style="width: 100%">
                         <el-table-column
-                                prop="user_name"
+                                type="index">
+                        </el-table-column>
+                        <el-table-column
+                                prop="username"
                                 label="姓名">
                         </el-table-column>
                         <el-table-column
-                                prop="user_email"
+                                prop="email"
                                 label="邮箱">
                         </el-table-column>
                         <el-table-column
-                                prop="user_tel"
+                                prop="mobile"
                                 label="电话">
                         </el-table-column>
                         <el-table-column
-                                prop="user_role"
+                                prop="role_name"
                                 label="角色">
                         </el-table-column>
                         <el-table-column
-                                prop="user_state"
+                                prop="mg_state"
                                 label="状态">
+                            <template slot-scope="scope">  <!--作用域插槽：可获取当前列内容-->
+                                <el-switch
+                                        v-model="scope.row.mg_state">
+                                </el-switch>
+                            </template>
                         </el-table-column>
                         <el-table-column
                                 prop="user_set"
@@ -84,8 +92,10 @@ export default {
            });
            if(result.meta.status!='200'){this.$message.error(result.meta.msg);}
            this.user_pageTotal=result.data.total;
+           this.user_tableDate=result.data.users;
+           console.log(result.data.users)
            this.$message.success(result.meta.msg);
-           
+
         },
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`);
