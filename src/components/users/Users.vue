@@ -46,21 +46,31 @@
                                 label="状态">
                             <template slot-scope="scope">  <!--作用域插槽：可获取当前列内容-->
                                 <el-switch
-                                        v-model="scope.row.mg_state">
+                                        v-model="scope.row.mg_state" @change="setUserState(scope.row)">
                                 </el-switch>
                             </template>
                         </el-table-column>
                         <el-table-column
                                 prop="user_set"
                                 label="操作">
+                            <template slot-scope="scope">
+                                {{scope.row.assign}}
+                                <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
+                                <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+                                <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
+                                    <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+                                </el-tooltip>
+                            </template>
                         </el-table-column>
                     </el-table>
                     <el-pagination
                             @size-change="handleSizeChange"
                             @current-change="handleCurrentChange"
-                            :page-size="10"
+                            :current-page="user_queryInfo.pagenum"
+                            :page-sizes="[1,2,5,10]"
+                            :page-size="user_queryInfo.pagesize"
                             layout="total, sizes, prev, pager, next, jumper"
-                            :total="user_pageTotal">
+                            :total="user_pageTotal" :enterable="false">
                     </el-pagination>
                 </template>
         </div>
@@ -78,8 +88,8 @@ export default {
             user_tableDate: [],
             user_queryInfo:{
                 query: '',
-                pagenum:'1',
-                pagesize:'4'
+                pagenum: 1,
+                pagesize: 1
             },
             user_pageTotal:0
 
@@ -97,11 +107,25 @@ export default {
            this.$message.success(result.meta.msg);
 
         },
+        async setUserState(userInfo){
+           const {data:result} = await this.$http.put(`users/${userInfo.id}/state/${userInfo.mg_state}`);
+           console.log(result);
+           if(result.meta.status!=200){
+               this.$message.error(result.meta.msg);
+           }
+            this.$message.success(result.meta.msg);
+        },
         handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+            //切换每页显示多少条
+            //console.log(`每页 ${val} 条`);
+            this.user_queryInfo.pagesize=val;
+            this.getUserList();
         },
         handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
+            //切换当前页数
+            //console.log(`当前页: ${val}`);
+            this.user_queryInfo.pagenum=val;
+            this.getUserList();
         }
     }
 }
