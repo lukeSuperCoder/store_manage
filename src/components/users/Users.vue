@@ -10,7 +10,7 @@
             <el-row :gutter="20">
                 <el-col :span="8">
                     <el-input v-model="user_queryInfo.query" placeholder="请输入内容" class="user_search_input">
-                        <el-button slot="append" icon="el-icon-search" class="user_search_button"></el-button>
+                        <el-button slot="append" icon="el-icon-search" class="user_search_button" @click="searchUser()"></el-button>
                     </el-input>
                 </el-col>
                 <el-col :span="4">
