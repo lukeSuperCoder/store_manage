@@ -9,12 +9,12 @@
         <div class="user_table">
             <el-row :gutter="20">
                 <el-col :span="8">
-                    <el-input v-model="user_queryInfo.query" placeholder="请输入内容" class="user_search_input">
-                        <el-button slot="append" icon="el-icon-search" class="user_search_button" @click="searchUser()"></el-button>
+                    <el-input v-model="user_queryInfo.query" placeholder="请输入内容" class="user_search_input" clearable @clear="getUserList">
+                        <el-button slot="append" icon="el-icon-search" class="user_search_button" @click="getUserList"></el-button>
                     </el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-button type="primary" class="user_add_button">添加用户</el-button>
+                    <el-button type="primary" class="user_add_button" @click="user_dialogVisible=true">添加用户</el-button>
                 </el-col>
             </el-row>
                 <template>
@@ -73,6 +73,35 @@
                             :total="user_pageTotal" :enterable="false">
                     </el-pagination>
                 </template>
+            <el-dialog
+                            title="提示"
+                            :visible.sync="user_dialogVisible"
+                            width="50%"
+                            :before-close="handleClose">
+                    <el-form :model="user_addForm" status-icon :rules="user_addFormRules" ref="user_addFormRef" label-width="100px"
+                             class="demo-ruleForm">
+                        <el-form-item label="用户名" prop="username">
+                            <el-input  v-model="user_addForm.username" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码" prop="password">
+                            <el-input type="password" v-model="user_addForm.password" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="邮箱" prop="email">
+                            <el-input v-model="user_addForm.email"></el-input>
+                        </el-form-item>
+                        <el-form-item label="手机号" prop="phone">
+                            <el-input v-model="user_addForm.phone"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+                            <el-button @click="resetForm('ruleForm')">重置</el-button>
+                        </el-form-item>
+                    </el-form>
+                    <span slot="footer" class="dialog-footer">
+                    <el-button @click="user_dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="user_dialogVisible = false">确 定</el-button>
+          </span>
+        </el-dialog>
         </div>
         </el-card>
     </div>
@@ -91,8 +120,48 @@ export default {
                 pagenum: 1,
                 pagesize: 1
             },
-            user_pageTotal:0
-
+            user_pageTotal:0,
+            user_dialogVisible:false,
+            user_addForm:{
+                username:'',
+                password:'',
+                email:'',
+                phone:''
+            },
+            user_addFormRules:{
+                username:[
+                    {
+                        required:true,message:"请输入用户名",trigger:"blur"
+                    },
+                    {
+                        min:3,max:10,message: "用户名长度不符合要求",trigger: "blur"
+                    }
+                ],
+                password:[
+                    {
+                        required:true,message:"请输入密码",trigger:"blur"
+                    },
+                    {
+                        min:3,max:10,message: "密码长度不符合要求",trigger: "blur"
+                    }
+                ],
+                email:[
+                    {
+                        required:true,message:"请输入邮箱",trigger:"blur"
+                    },
+                    {
+                        type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']
+                    }
+                ],
+                phone:[
+                    {
+                        required:true,message:"请输入手机号",trigger:"blur"
+                    },
+                    {
+                        type: 'number', message: '手机号必须为数字值'
+                    }
+                ],
+            }
         }
     },
     methods:{
@@ -103,13 +172,10 @@ export default {
            if(result.meta.status!='200'){this.$message.error(result.meta.msg);}
            this.user_pageTotal=result.data.total;
            this.user_tableDate=result.data.users;
-           console.log(result.data.users)
            this.$message.success(result.meta.msg);
-
         },
         async setUserState(userInfo){
            const {data:result} = await this.$http.put(`users/${userInfo.id}/state/${userInfo.mg_state}`);
-           console.log(result);
            if(result.meta.status!=200){
                this.$message.error(result.meta.msg);
            }
