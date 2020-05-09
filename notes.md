@@ -11,7 +11,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);`元素居中显示  
-提交码云步骤：
+提交码云步骤： 
 `git status  git add .   git commit -m "my first commit"
 git checkout master  git merge login  git push`
 
