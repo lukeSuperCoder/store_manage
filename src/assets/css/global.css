@@ -2,6 +2,7 @@ html,body,#app{
     height: 100%;
     margin: 0;
     padding: 0;
+    min-width: 1366px;/* 设置最小宽度，当浏览器宽度小于这个值时，页面强制保持此宽度*/
 }
 .el-breadcrumb{
     margin-bottom: 15px;

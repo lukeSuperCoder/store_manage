@@ -15,29 +15,24 @@
                         style="width: 100%">
                     <el-table-column type="expand">
                         <template slot-scope="props">
-                            <el-form label-position="left" inline class="demo-table-expand">
-                                <el-form-item label="商品名称">
-                                    <span>{{ props.row.name }}</span>
-                                </el-form-item>
-                                <el-form-item label="所属店铺">
-                                    <span>{{ props.row.shop }}</span>
-                                </el-form-item>
-                                <el-form-item label="商品 ID">
-                                    <span>{{ props.row.id }}</span>
-                                </el-form-item>
-                                <el-form-item label="店铺 ID">
-                                    <span>{{ props.row.shopId }}</span>
-                                </el-form-item>
-                                <el-form-item label="商品分类">
-                                    <span>{{ props.row.category }}</span>
-                                </el-form-item>
-                                <el-form-item label="店铺地址">
-                                    <span>{{ props.row.address }}</span>
-                                </el-form-item>
-                                <el-form-item label="商品描述">
-                                    <span>{{ props.row.desc }}</span>
-                                </el-form-item>
-                            </el-form>
+                            <el-row :class="['bdbottom',i1===0?'bdtop':'','v-center']" v-for="(item1,i1) in props.row.children" :key="item1.id">
+                                <el-col :span="5">
+                                       <el-tag closable  @close="deleteTag()">{{item1.authName}}</el-tag>
+                                        <i class="el-icon-caret-right"></i>
+                                </el-col>
+                                <el-col :span="19">
+                                    <!--通过for循环嵌套二级菜单-->
+                                    <el-row :class="[i2===0?'':'bdtop','v-center']" v-for="(item2,i2) in item1.children" :key="item2.id">
+                                        <el-col :span="6">
+                                            <el-tag type="success" closable  @close="deleteTag()">{{item2.authName}}</el-tag>
+                                            <i class="el-icon-caret-right"></i>
+                                        </el-col>
+                                        <el-col :span="18">
+                                            <el-tag type="warning" closable  @close="deleteTag()" v-for="(item3) in item2.children" :key="item3.id">{{item3.authName}}</el-tag>
+                                        </el-col>
+                                    </el-row>
+                                </el-col>
+                            </el-row>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -82,6 +77,23 @@
                 const {data:result}  = await this.$http.get('roles');
                 this.role_tableDate = result.data;
                 console.log(result);
+            },
+            deleteTag(){
+                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!',
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
             }
         }
     }
@@ -104,5 +116,18 @@
         margin-right: 0;
         margin-bottom: 0;
         width: 50%;
+    }
+    .el-tag{
+        margin: 7px;
+    }
+    .bdtop{
+        border-top: 1px solid #eee;
+    }
+    .bdbottom{
+        border-bottom: 1px solid #eee;
+    }
+    .v-center{
+        display: flex;
+        align-items: center;//纵向居中
     }
 </style>
