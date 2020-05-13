@@ -262,6 +262,7 @@ export default {
                     if (result.meta.status == 201) {
                         this.$message.success(result.meta.msg);
                         this.closeAddDialog();
+                        this.getUserList();
                     } else {
                         this.$message.error(result.meta.msg);
                     }
