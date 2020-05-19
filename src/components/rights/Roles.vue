@@ -107,21 +107,31 @@
         <el-dialog
                 title="提示"
                 :visible.sync="role_delete_dialogVisible"
-                width="30%">
+                width="50%"
+                :close-on-click-modal="false">
             <span>你确定要删除用户{{this.role_updateForm.roleName}}吗？</span>
             <span slot="footer" class="dialog-footer">
                     <el-button @click="role_delete_dialogVisible = false">取 消</el-button>
                     <el-button type="primary" @click="deleteRole">确 定</el-button>
                   </span>
         </el-dialog>
-        <el-dialog fullscreen
+        <el-dialog
                 title="提示"
                 :visible.sync="role_allot_dialogVisible"
-                width="30%">
-            <span>这是一段信息</span>
+                width="50%"
+                :close-on-click-modal="false">
+                <el-tree
+                        :data="rights_tableData"
+                        ref="rights_tableDataRef"
+                        show-checkbox
+                        node-key="id"
+                        :default-checked-keys="rights_key"
+                        default-expand-all
+                        :props="rights_tableDateProps">
+                </el-tree>
             <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+    <el-button @click="closeAllotDialog">取 消</el-button>
+    <el-button type="primary" @click="allotRights">确 定</el-button>
   </span>
         </el-dialog>
     </div>
@@ -134,6 +144,13 @@
         data(){
             return{
                 role_tableDate: [],
+                rights_tableData:[],
+                rights_tableDateProps: {
+                    children: 'children',
+                    label: 'authName'
+                },
+                rights_roleId:'',
+                rights_key:[],
                 role_add_dialogVisible:false,
                 role_update_dialogVisible:false,
                 role_addForm:{
@@ -154,6 +171,11 @@
             async getRolesList(){
                 const {data:result}  = await this.$http.get('roles');
                 this.role_tableDate = result.data;
+                //console.log(result);
+            },
+            async getRightsList(){
+                const {data:result} = await this.$http.get('rights/tree');
+                this.rights_tableData = result.data;
                 console.log(result);
             },
             async deleteTag(rightId,role){
@@ -207,6 +229,11 @@
                 this.role_update_dialogVisible = false;
                 this.$refs['role_updateFormRef'].resetFields();
             },
+            //重置分配权限表单
+            closeAllotDialog(){
+                this.role_allot_dialogVisible=false;
+                this.rights_key=[];
+            },
             //删除角色信息
             showDeleteMessage(userInfo){
                 this.role_delete_dialogVisible=true;
@@ -232,8 +259,36 @@
                     this.$message.error(result.meta.msg);
                 }
             },
-             showAllotMessage(){
+             showAllotMessage(node){
+                this.rights_roleId = node.id;
+                this.getRightsList();
+                this.getRightsKey(node,this.rights_key);
                 this.role_allot_dialogVisible=true;
+            },
+            getRightsKey(node,arr){
+                if(!node.children){
+                    return arr.push(node.id);
+                }
+                node.children.forEach(item=>{
+                    this.getRightsKey(item,arr);
+                })
+            },
+            async allotRights(){
+                const keys = [
+                    ...this.$refs['rights_tableDataRef'].getCheckedKeys(),
+                    ...this.$refs['rights_tableDataRef'].getHalfCheckedKeys()
+                ]
+                const idStr = keys.join(',');
+                const {data:result} = await this.$http.post(`roles/${this.rights_roleId}/rights`,{
+                    rids:idStr
+                });
+                if (result.meta.status == 200) {
+                    this.$message.success(result.meta.msg);
+                    this.closeAllotDialog();
+                    this.getRolesList();
+                } else {
+                    this.$message.error(result.meta.msg);
+                }
             }
         }
     }
